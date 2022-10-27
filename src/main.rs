@@ -38,6 +38,21 @@ mod topology{
         }
     }
 
+    fn max(a: f64, b: f64) -> f64 {
+        if a > b {
+            a
+        } else {
+            b
+        }
+    }
+    fn min(a: f64, b: f64) -> f64 {
+        if a < b {
+            a
+        } else {
+            b
+        }
+    }
+
     impl square{
         pub fn new(p1:point, p2:point) -> Self{
             Self{
@@ -77,6 +92,27 @@ mod topology{
             self.p_br.x = self.p_br.x + d;
             self.p_br.y = self.p_br.y - d;
         }
+
+        pub fn intersection(&self, other: &Self) -> Self {
+            let x1 = max(self.p_tl.x, other.p_tl.x);
+            let y1 = max(self.p_tl.y, other.p_tl.y);
+            let x2 = min(self.p_br.x, other.p_br.x);
+            let y2 = min(self.p_br.y, other.p_br.y);
+
+            if x1 > x2 || y1 > y2 {
+                square::new(point::new(0.0, 0.0), point::new(0.0, 0.0))
+            } else {
+                square::new(point::new(x1, y1), point::new(x2, y2))
+            }
+        }
+
+        pub fn union(&self, other: &Self) -> Self {
+            let x1 = min(self.p_tl.x, other.p_tl.x);
+            let y1 = min(self.p_tl.y, other.p_tl.y);
+            let x2 = max(self.p_br.x, other.p_br.x);
+            let y2 = max(self.p_br.y, other.p_br.y);
+            square::new(point::new(x1, y1), point::new(x2, y2))
+        }
     }
 
 }
@@ -111,5 +147,49 @@ mod test {
 
 
         assert_eq!(sq.area(), 30.0);
+    }
+
+    #[test]
+    fn intersection_test_corner() {
+        let s1: square = square::new(point::new(0.0, 0.0), point::new(3.0, 3.0));
+        let s2: square = square::new(point::new(1.0, 1.0), point::new(4.0, 4.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.tl().x(), 1.0);
+        assert_eq!(s3.tl().y(), 1.0);
+        assert_eq!(s3.br().x(), 3.0);
+        assert_eq!(s3.br().y(), 3.0);
+    }
+
+    #[test]
+    fn intersection_test_cross() {
+        let s1: square = square::new(point::new(0.0, 0.0), point::new(3.0, 3.0));
+        let s2: square = square::new(point::new(1.0, -1.0), point::new(2.0, 4.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.tl().x(), 1.0);
+        assert_eq!(s3.tl().y(), 0.0);
+        assert_eq!(s3.br().x(), 2.0);
+        assert_eq!(s3.br().y(), 3.0);
+    }
+
+    #[test]
+    fn intersection_test_out() {
+        let s1: square = square::new(point::new(0.0, 0.0), point::new(3.0, 3.0));
+        let s2: square = square::new(point::new(5.0, 5.0), point::new(10.0, 10.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.tl().x(), 0.0);
+        assert_eq!(s3.tl().y(), 0.0);
+        assert_eq!(s3.br().x(), 0.0);
+        assert_eq!(s3.br().y(), 0.0);
+    }
+
+    #[test]
+    fn union_test_cross() {
+        let s1: square = square::new(point::new(0.0, 0.0), point::new(3.0, 3.0));
+        let s2: square = square::new(point::new(1.0, -1.0), point::new(2.0, 4.0));
+        let s3 = s1.union(&s2);
+        assert_eq!(s3.tl().x(), 0.0);
+        assert_eq!(s3.tl().y(), -1.0);
+        assert_eq!(s3.br().x(), 3.0);
+        assert_eq!(s3.br().y(), 4.0);
     }
 }
