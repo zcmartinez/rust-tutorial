@@ -46,6 +46,20 @@ mod topology{
             }
         }
 
+        pub fn tl(&self) -> point {
+            point {
+                x: self.p_tl.x,
+                y: self.p_tl.y,
+            }
+        }
+
+        pub fn br(&self) -> point {
+            point {
+                x: self.p_br.x,
+                y: self.p_br.y,
+            }
+        }
+
         pub fn height (&self) -> f64 {
             self.p_tl.y - self.p_br.y
         }
