@@ -162,10 +162,10 @@ mod test {
         let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
         let s2: Square = Square::new(Point::new(1.0, 1.0), Point::new(4.0, 4.0));
         let s3 = s1.intersection(&s2);
-        assert_eq!(s3.upper().x(), 1.0);
-        assert_eq!(s3.upper().y(), 1.0);
-        assert_eq!(s3.lower().x(), 3.0);
-        assert_eq!(s3.lower().y(), 3.0);
+        assert_eq!(s3.lower().x(), 1.0);
+        assert_eq!(s3.lower().y(), 1.0);
+        assert_eq!(s3.upper().x(), 3.0);
+        assert_eq!(s3.upper().y(), 3.0);
     }
 
     #[test]
@@ -173,10 +173,10 @@ mod test {
         let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
         let s2: Square = Square::new(Point::new(1.0, -1.0), Point::new(2.0, 4.0));
         let s3 = s1.intersection(&s2);
-        assert_eq!(s3.upper().x(), 1.0);
-        assert_eq!(s3.upper().y(), 0.0);
-        assert_eq!(s3.lower().x(), 2.0);
-        assert_eq!(s3.lower().y(), 3.0);
+        assert_eq!(s3.lower().x(), 1.0);
+        assert_eq!(s3.lower().y(), 0.0);
+        assert_eq!(s3.upper().x(), 2.0);
+        assert_eq!(s3.upper().y(), 3.0);
     }
 
     #[test]
@@ -184,10 +184,10 @@ mod test {
         let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
         let s2: Square = Square::new(Point::new(5.0, 5.0), Point::new(10.0, 10.0));
         let s3 = s1.intersection(&s2);
-        assert_eq!(s3.upper().x(), 0.0);
-        assert_eq!(s3.upper().y(), 0.0);
         assert_eq!(s3.lower().x(), 0.0);
         assert_eq!(s3.lower().y(), 0.0);
+        assert_eq!(s3.upper().x(), 0.0);
+        assert_eq!(s3.upper().y(), 0.0);
     }
 
     #[test]
@@ -195,9 +195,9 @@ mod test {
         let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
         let s2: Square = Square::new(Point::new(1.0, -1.0), Point::new(2.0, 4.0));
         let s3 = s1.union(&s2);
-        assert_eq!(s3.upper().x(), 0.0);
-        assert_eq!(s3.upper().y(), -1.0);
-        assert_eq!(s3.lower().x(), 3.0);
-        assert_eq!(s3.lower().y(), 4.0);
+        assert_eq!(s3.lower().x(), 0.0);
+        assert_eq!(s3.lower().y(), -1.0);
+        assert_eq!(s3.upper().x(), 3.0);
+        assert_eq!(s3.upper().y(), 4.0);
     }
 }
