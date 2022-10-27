@@ -12,20 +12,17 @@ enum State<T, Q = i32> {
 mod topology {
     pub struct Point {
         x: f64,
-        y: f64
+        y: f64,
     }
 
     pub struct Square {
         p_tl: Point,
-        p_br: Point
+        p_br: Point,
     }
 
     impl Point {
         pub fn new(x: f64, y: f64) -> Self {
-            Self {
-                x,
-                y
-            }
+            Self { x, y }
         }
 
         pub fn x(&self) -> f64 {
@@ -44,11 +41,15 @@ mod topology {
             let max_y = p1.y.max(p2.y);
             Self {
                 p_tl: Point::new(min_x, min_y),
-                p_br: Point::new(max_x, max_y)
+                p_br: Point::new(max_x, max_y),
             }
         }
-        pub fn lower(&self) -> &Point { &self.p_tl }
-        pub fn upper(&self) -> &Point { &self.p_br }
+        pub fn lower(&self) -> &Point {
+            &self.p_tl
+        }
+        pub fn upper(&self) -> &Point {
+            &self.p_br
+        }
 
         pub fn height(&self) -> f64 {
             self.p_tl.y - self.p_br.y
@@ -90,7 +91,6 @@ mod topology {
             let y2 = self.p_br.y.max(other.p_br.y);
             Square::new(Point::new(x1, y1), Point::new(x2, y2))
         }
-    }
 
         pub fn dilate_x(&mut self, d: f64) -> () {
             todo!()
@@ -125,7 +125,6 @@ mod topology {
         }
     }
 }
-
 #[cfg(test)]
 mod test {
     use crate::topology::{Point, Square};
@@ -154,7 +153,6 @@ mod test {
         let mut sq: Square = Square::new(p1, p2);
 
         sq.dilate(2.0);
-
 
         assert_eq!(sq.area(), 30.0);
     }
