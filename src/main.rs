@@ -52,7 +52,7 @@ mod topology {
         }
 
         pub fn height(&self) -> f64 {
-            self.p_tl.y - self.p_br.y
+            self.p_br.y - self.p_tl.y
         }
         pub fn width(&self) -> f64 {
             self.p_br.x - self.p_tl.x
@@ -67,9 +67,9 @@ mod topology {
         }
         pub fn dilate(&mut self, d: f64) -> () {
             self.p_tl.x = self.p_tl.x - d;
-            self.p_tl.y = self.p_tl.y + d;
+            self.p_tl.y = self.p_tl.y - d;
             self.p_br.x = self.p_br.x + d;
-            self.p_br.y = self.p_br.y - d;
+            self.p_br.y = self.p_br.y + d;
         }
         pub fn intersection(&self, other: &Self) -> Self {
             let x1 = self.p_tl.x.max(other.p_tl.x);
