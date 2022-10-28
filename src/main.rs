@@ -3,6 +3,7 @@ fn main() {}
 fn consume_s(s: String) -> usize {
     s.len()
 }
+
 enum State<T, Q = i32> {
     ON(Q),
     OFF(T),
@@ -13,6 +14,7 @@ mod topology {
         x: f64,
         y: f64,
     }
+
     pub struct Square {
         p_tl: Point,
         p_br: Point,
@@ -42,6 +44,7 @@ mod topology {
                 p_br: Point::new(max_x, max_y),
             }
         }
+
         pub fn lower(&self) -> &Point {
             &self.p_tl
         }
