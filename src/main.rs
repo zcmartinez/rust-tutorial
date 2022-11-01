@@ -44,6 +44,7 @@ mod topology {
                 p_br: Point::new(max_x, max_y),
             }
         }
+        
         pub fn lower(&self) -> &Point {
             &self.p_tl
         }
@@ -52,10 +53,10 @@ mod topology {
         }
 
         pub fn height(&self) -> f64 {
-            self.p_br.y - self.p_tl.y
+            f64::abs(self.p_br.y - self.p_tl.y)
         }
         pub fn width(&self) -> f64 {
-            self.p_br.x - self.p_tl.x
+            f64::abs(self.p_br.x - self.p_tl.x)
         }
 
         pub fn area(&self) -> f64 {
@@ -63,8 +64,12 @@ mod topology {
         }
 
         pub fn erosion(&mut self, d: f64) {
-            todo!()
+            self.p_tl.x = self.p_tl.x + d;
+            self.p_tl.y = self.p_tl.y + d;
+            self.p_br.x = self.p_br.x - d;
+            self.p_br.y = self.p_br.y - d;
         }
+
         pub fn dilate(&mut self, d: f64) -> () {
             self.p_tl.x = self.p_tl.x - d;
             self.p_tl.y = self.p_tl.y - d;
@@ -93,19 +98,25 @@ mod topology {
         }
 
         pub fn dilate_x(&mut self, d: f64) -> () {
-            todo!()
+            let wth = self.width() * 0.5 * d;
+            let mid_x = (self.p_br.x - self.p_tl.x) * 0.5;
+            self.p_tl.x = mid_x - wth;
+            self.p_br.x = mid_x + wth;
         }
 
         pub fn dilate_y(&mut self, d: f64) -> () {
-            todo!()
+            let wth = self.height() * 0.5 * d;
+            let mid_y = (self.p_tl.y - self.p_tl.y) * 0.5;
+            self.p_tl.y = mid_y + wth;
+            self.p_br.y = mid_y - wth;
         }
 
         pub fn erosion_x(&mut self, d: f64) -> () {
-            todo!()
+            self.dilate_x(1.0 / d);
         }
 
         pub fn erosion_y(&mut self, d: f64) -> () {
-            todo!()
+            self.dilate_y(1.0 / d);
         }
 
         pub fn has_point(&self, p1: &Point) -> bool {
@@ -117,10 +128,6 @@ mod topology {
         }
 
         pub fn manhattan_distance(&self, sq: &Square) -> f64 {
-            todo!()
-        }
-
-        pub fn sort(sqaures: Vec<Square>) -> Vec<Square> {
             todo!()
         }
     }
@@ -147,7 +154,7 @@ mod test {
     }
 
     #[test]
-    fn dilat_test() {
+    fn dilate_test() {
         let p1: Point = Point::new(0.0, 2.0);
         let p2: Point = Point::new(1.0, 0.0);
         let mut sq: Square = Square::new(p1, p2);
@@ -199,5 +206,14 @@ mod test {
         assert_eq!(s3.lower().y(), -1.0);
         assert_eq!(s3.upper().x(), 3.0);
         assert_eq!(s3.upper().y(), 4.0);
+    }
+    fn erosion_test() {
+        let p1: Point = Point::new(0.0, 4.0);
+        let p2: Point = Point::new(4.0, 0.0);
+        let mut sq: Square = Square::new(p1, p2);
+
+        sq.erosion(0.5);
+
+        assert_eq!(sq.area(), 9.0);
     }
 }
