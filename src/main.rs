@@ -72,19 +72,25 @@ mod topology {
         }
 
         pub fn dilate_x(&mut self, d: f64) -> () {
-            todo!()
+            let wth = self.width() * 0.5 * d;
+            let mid_x = (self.p_br.x - self.p_tl.x) * 0.5;
+            self.p_tl.x = mid_x - wth;
+            self.p_br.x = mid_x + wth;
         }
 
         pub fn dilate_y(&mut self, d: f64) -> () {
-            todo!()
+            let wth = self.height() * 0.5 * d;
+            let mid_y = (self.p_tl.y - self.p_tl.y) * 0.5;
+            self.p_tl.y = mid_y + wth;
+            self.p_br.y = mid_y - wth;
         }
 
         pub fn erosion_x(&mut self, d: f64) -> () {
-            todo!()
+            self.dilate_x(1.0 / d);
         }
 
         pub fn erosion_y(&mut self, d: f64) -> () {
-            todo!()
+            self.dilate_y(1.0 / d);
         }
 
         pub fn has_point(&self, p1: &Point) -> bool {
