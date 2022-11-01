@@ -44,7 +44,7 @@ mod topology {
                 p_br: Point::new(max_x, max_y),
             }
         }
-
+        
         pub fn lower(&self) -> &Point {
             &self.p_tl
         }
@@ -53,7 +53,7 @@ mod topology {
         }
 
         pub fn height(&self) -> f64 {
-            f64::abs(self.p_tl.y - self.p_br.y)
+            f64::abs(self.p_br.y - self.p_tl.y)
         }
         pub fn width(&self) -> f64 {
             f64::abs(self.p_br.x - self.p_tl.x)
@@ -75,6 +75,26 @@ mod topology {
             self.p_tl.y = self.p_tl.y - d;
             self.p_br.x = self.p_br.x + d;
             self.p_br.y = self.p_br.y + d;
+        }
+        pub fn intersection(&self, other: &Self) -> Self {
+            let x1 = self.p_tl.x.max(other.p_tl.x);
+            let y1 = self.p_tl.y.max(other.p_tl.y);
+            let x2 = self.p_br.x.min(other.p_br.x);
+            let y2 = self.p_br.y.min(other.p_br.y);
+
+            if x1 > x2 || y1 > y2 {
+                Square::new(Point::new(0.0, 0.0), Point::new(0.0, 0.0))
+            } else {
+                Square::new(Point::new(x1, y1), Point::new(x2, y2))
+            }
+        }
+
+        pub fn union(&self, other: &Self) -> Self {
+            let x1 = self.p_tl.x.min(other.p_tl.x);
+            let y1 = self.p_tl.y.min(other.p_tl.y);
+            let x2 = self.p_br.x.max(other.p_br.x);
+            let y2 = self.p_br.y.max(other.p_br.y);
+            Square::new(Point::new(x1, y1), Point::new(x2, y2))
         }
 
         pub fn dilate_x(&mut self, d: f64) -> () {
@@ -112,7 +132,6 @@ mod topology {
         }
     }
 }
-
 #[cfg(test)]
 mod test {
     use crate::topology::{Point, Square};
@@ -146,6 +165,48 @@ mod test {
     }
 
     #[test]
+    fn intersection_test_corner() {
+        let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
+        let s2: Square = Square::new(Point::new(1.0, 1.0), Point::new(4.0, 4.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.lower().x(), 1.0);
+        assert_eq!(s3.lower().y(), 1.0);
+        assert_eq!(s3.upper().x(), 3.0);
+        assert_eq!(s3.upper().y(), 3.0);
+    }
+
+    #[test]
+    fn intersection_test_cross() {
+        let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
+        let s2: Square = Square::new(Point::new(1.0, -1.0), Point::new(2.0, 4.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.lower().x(), 1.0);
+        assert_eq!(s3.lower().y(), 0.0);
+        assert_eq!(s3.upper().x(), 2.0);
+        assert_eq!(s3.upper().y(), 3.0);
+    }
+
+    #[test]
+    fn intersection_test_out() {
+        let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
+        let s2: Square = Square::new(Point::new(5.0, 5.0), Point::new(10.0, 10.0));
+        let s3 = s1.intersection(&s2);
+        assert_eq!(s3.lower().x(), 0.0);
+        assert_eq!(s3.lower().y(), 0.0);
+        assert_eq!(s3.upper().x(), 0.0);
+        assert_eq!(s3.upper().y(), 0.0);
+    }
+
+    #[test]
+    fn union_test_cross() {
+        let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
+        let s2: Square = Square::new(Point::new(1.0, -1.0), Point::new(2.0, 4.0));
+        let s3 = s1.union(&s2);
+        assert_eq!(s3.lower().x(), 0.0);
+        assert_eq!(s3.lower().y(), -1.0);
+        assert_eq!(s3.upper().x(), 3.0);
+        assert_eq!(s3.upper().y(), 4.0);
+    }
     fn erosion_test() {
         let p1: Point = Point::new(0.0, 4.0);
         let p2: Point = Point::new(4.0, 0.0);
