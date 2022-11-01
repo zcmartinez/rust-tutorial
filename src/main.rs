@@ -12,20 +12,17 @@ enum State<T, Q = i32> {
 mod topology {
     pub struct Point {
         x: f64,
-        y: f64
+        y: f64,
     }
 
     pub struct Square {
         p_tl: Point,
-        p_br: Point
+        p_br: Point,
     }
 
     impl Point {
         pub fn new(x: f64, y: f64) -> Self {
-            Self {
-                x,
-                y
-            }
+            Self { x, y }
         }
 
         pub fn x(&self) -> f64 {
@@ -44,17 +41,22 @@ mod topology {
             let max_y = p1.y.max(p2.y);
             Self {
                 p_tl: Point::new(min_x, min_y),
-                p_br: Point::new(max_x, max_y)
+                p_br: Point::new(max_x, max_y),
             }
         }
-        pub fn lower(&self) -> &Point { &self.p_tl }
-        pub fn upper(&self) -> &Point { &self.p_br }
+
+        pub fn lower(&self) -> &Point {
+            &self.p_tl
+        }
+        pub fn upper(&self) -> &Point {
+            &self.p_br
+        }
 
         pub fn height(&self) -> f64 {
-            self.p_tl.y - self.p_br.y
+            f64::abs(self.p_tl.y - self.p_br.y)
         }
         pub fn width(&self) -> f64 {
-            self.p_br.x - self.p_tl.x
+            f64::abs(self.p_br.x - self.p_tl.x)
         }
 
         pub fn area(&self) -> f64 {
@@ -62,13 +64,17 @@ mod topology {
         }
 
         pub fn erosion(&mut self, d: f64) {
-            todo!()
+            self.p_tl.x = self.p_tl.x + d;
+            self.p_tl.y = self.p_tl.y + d;
+            self.p_br.x = self.p_br.x - d;
+            self.p_br.y = self.p_br.y - d;
         }
+
         pub fn dilate(&mut self, d: f64) -> () {
             self.p_tl.x = self.p_tl.x - d;
-            self.p_tl.y = self.p_tl.y + d;
+            self.p_tl.y = self.p_tl.y - d;
             self.p_br.x = self.p_br.x + d;
-            self.p_br.y = self.p_br.y - d;
+            self.p_br.y = self.p_br.y + d;
         }
 
         pub fn dilate_x(&mut self, d: f64) -> () {
@@ -104,10 +110,6 @@ mod topology {
         pub fn manhattan_distance(&self, sq: &Square) -> f64 {
             todo!()
         }
-
-        pub fn sort(sqaures: Vec<Square>) -> Vec<Square> {
-            todo!()
-        }
     }
 }
 
@@ -133,14 +135,24 @@ mod test {
     }
 
     #[test]
-    fn dilat_test() {
+    fn dilate_test() {
         let p1: Point = Point::new(0.0, 2.0);
         let p2: Point = Point::new(1.0, 0.0);
         let mut sq: Square = Square::new(p1, p2);
 
         sq.dilate(2.0);
 
-
         assert_eq!(sq.area(), 30.0);
+    }
+
+    #[test]
+    fn erosion_test() {
+        let p1: Point = Point::new(0.0, 4.0);
+        let p2: Point = Point::new(4.0, 0.0);
+        let mut sq: Square = Square::new(p1, p2);
+
+        sq.erosion(0.5);
+
+        assert_eq!(sq.area(), 9.0);
     }
 }
