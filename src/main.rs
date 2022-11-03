@@ -1,3 +1,5 @@
+mod ml_data;
+
 fn main() {}
 
 fn consume_s(s: String) -> usize {
